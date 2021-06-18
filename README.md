@@ -9,6 +9,7 @@ This repository contains the notebooks that are used in the workshop to demonstr
 - [Introduction : Databricks 1:M Production Delta Workshop](#introduction--databricks-1m-production-delta-workshop)
 - [Reading Resources](#reading-resources)
 - [Workshop Flow](#workshop-flow)
+  - [Generator](#generator)
 - [Setup / Requirmements](#setup--requirmements)
   - [DBR Version](#dbr-version)
   - [Repos](#repos)
@@ -25,10 +26,13 @@ The workshop consists of 4 interactive sections that are separated by 4 notebook
 
 |Notebook|Summary|
 |--------|-------|
-|01-Intro to Unified Delta Processing.py|Processing and ingesting data at scale utilizing databricks tunables|
-|02-Medallion Architecture.py|Curating data and pipelining it via a medallion architecture|
-|03-Delta Jobs Optimization.py|Debugging and understanding delta lake performance|
-|04-Production Compliance.py|Handy delta lake features for production compliant workloads|
+|`01-Intro to Unified Delta Processing.py`|Processing and ingesting data at scale utilizing databricks tunables|
+|`02-Medallion Architecture.py`|Curating data and pipelining it via a medallion architecture|
+|`03-Delta Jobs Optimization.py`|Debugging and understanding delta lake performance|
+|`04-Production Compliance.py`|Handy delta lake features for production compliant workloads|
+
+## Generator
+In order to visualize the effect of increasing throughput on Delta Lake performance, there is a generator script located in lib. Run `00-Generator.py` after `01-Intro to Unified Delta Processing.py` in Databricks to increase throughput requirements on the delta stream.
 
 
 # Setup / Requirmements
@@ -37,7 +41,7 @@ This workshop requires a running Databricks workspace. If you are an existing Da
 
 ## DBR Version
 
-The features used in this workshop require DBR 8.2.
+The features used in this workshop require `DBR 8.2`.
 
 ## Repos
 
