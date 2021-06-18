@@ -6,6 +6,8 @@ This repository contains the notebooks that are used in the workshop to demonstr
 
 [Link to Databricks Workshop](https://pages.databricks.com/202106-AMER-VE-MMComm-Delta-in-ProductionHands-on-Workshop-Delta-in-Production-2021-06-03.html)
 
+![delta_lake](img/Multi-Hop%20Delta%20Lake.png)
+
 - [Introduction : Databricks 1:M Production Delta Workshop](#introduction--databricks-1m-production-delta-workshop)
 - [Reading Resources](#reading-resources)
 - [Workshop Flow](#workshop-flow)
