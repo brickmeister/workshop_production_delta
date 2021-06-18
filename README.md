@@ -12,7 +12,7 @@ This repository contains the notebooks that are used in the workshop to demonstr
 - [Reading Resources](#reading-resources)
 - [Workshop Flow](#workshop-flow)
   - [Generator](#generator)
-- [Setup / Requirmements](#setup--requirmements)
+- [Setup / Requirements](#setup--requirements)
   - [DBR Version](#dbr-version)
   - [Repos](#repos)
   - [DBC Archive](#dbc-archive)
@@ -37,7 +37,7 @@ The workshop consists of 4 interactive sections that are separated by 4 notebook
 In order to visualize the effect of increasing throughput on Delta Lake performance, there is a generator script located in lib. Run `00-Generator.py` after `01-Intro to Unified Delta Processing.py` in Databricks to increase throughput requirements on the delta stream.
 
 
-# Setup / Requirmements
+# Setup / Requirements
 
 This workshop requires a running Databricks workspace. If you are an existing Databricks customer, you can use your existing Databricks workspace. Otherwise, the notebooks in this workshop have been tested to run on [Databricks Community Edition](https://databricks.com/product/faq/community-edition) as well.
 
