@@ -10,7 +10,7 @@
 # MAGIC |Jobs| Production level automated runs of ETL/ML Pipelines|https://docs.databricks.com/jobs.html|
 # MAGIC |Cluster Tuning | Controlling the knobs associated with eeking out maximal performance|https://docs.databricks.com/clusters/configure.html|
 # MAGIC |DAG Tuning | Controlling the stages associated with a Spark Job and a Query Execution Plan | https://databricks.com/session/understanding-query-plans-and-spark-uis|
-# MAGIC |Logs | Spark Driver and Cluster Logs that provide execution and autoscaling details | https://databricks.com/session/understanding-query-plans-and-spark-uis|
+# MAGIC |Logs | Spark Driver and Cluster Logs that provide execution and autoscaling details | https://docs.databricks.com/spark/latest/rdd-streaming/debugging-streaming-applications.html|
 # MAGIC 
 # MAGIC Useful blogs to understand how Delta Lake performance tuning works are listed below.
 # MAGIC * [Best Practices](https://docs.databricks.com/delta/best-practices.html)
