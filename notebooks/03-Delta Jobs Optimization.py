@@ -159,6 +159,12 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Driver Logs - Photon is Enabled
+# MAGIC %md
+# MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/DriverLog_AcceleratedwithPhotonEnabled.png' /img> 
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC 
 # MAGIC ## Event Log
