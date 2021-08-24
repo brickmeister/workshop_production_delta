@@ -159,7 +159,16 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Driver Logs - Photon is Enabled
+# MAGIC %md
+# MAGIC ### Photon-Enabled Clusters
+# MAGIC 
+# MAGIC By enabling the advice text (`set spark.databricks.adviceGenerator.acceleratedWithPhoton.enabled = true;`), you can trace photon-enabled clusters logs in the INFO section of Driver logs under Log4j output. Look specifically for "Accelerated with photon" in the logs to find out how much your queries and workloads accelerated by photon.
+# MAGIC 
+# MAGIC <img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em" src="https://files.training.databricks.com/static/images/icon-warning.svg"/, width = 25> 
+# MAGIC ** Advice text is disabled by default**, and you have to enable it in advance, prior to running your queries.
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/DriverLog_AcceleratedwithPhotonEnabled.png' /img> 
 
