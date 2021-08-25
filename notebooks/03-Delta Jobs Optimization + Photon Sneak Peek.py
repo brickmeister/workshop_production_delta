@@ -151,6 +151,16 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC ## Event Log
+# MAGIC 
+# MAGIC Look at the cluster event logs to determine if there were any autoscaling issues. Look specifically for node acquisition issues (due to cloud limits) or lack of autoscaling for an increasing workload size.
+# MAGIC 
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/event%20logs.png?raw=true' /img>
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## Driver Logs
 # MAGIC 
 # MAGIC Looking for errors in the driver logs to determine if a job has failed due to an error.
@@ -169,15 +179,34 @@
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC 
+# MAGIC set spark.databricks.adviceGenerator.acceleratedWithPhoton.enabled = true;
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/DriverLog_AcceleratedwithPhotonEnabled.png' /img> 
 
 # COMMAND ----------
 
+# DBTITLE 1,Run Explain on Photon-Enabled Cluster
+# MAGIC %scala
+# MAGIC 
+# MAGIC sc.range(0, 100).toDF.write.mode(SaveMode.Overwrite).parquet("/tmp/photon/test.parquet")
+# MAGIC spark.read.parquet("/tmp/photon/test.parquet").createOrReplaceTempView("photon_test_table")
+# MAGIC spark.sql("EXPLAIN SELECT COUNT(*), SUM(value) FROM photon_test_table").collect().foreach(println)
+
+# COMMAND ----------
+
+# DBTITLE 1,Run Explain when Photon is Disabled
 # MAGIC %md
 # MAGIC 
-# MAGIC ## Event Log
-# MAGIC 
-# MAGIC Look at the cluster event logs to determine if there were any autoscaling issues. Look specifically for node acquisition issues (due to cloud limits) or lack of autoscaling for an increasing workload size.
-# MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/event%20logs.png?raw=true' /img>
+# MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/PhotonDisabledQueryPlan.png' /img> 
+
+# COMMAND ----------
+
+# MAGIC %scala
+# MAGIC sc.range(0, 100).toDF.write.mode(SaveMode.Overwrite).parquet("/tmp/photon/test.parquet")
+# MAGIC spark.read.parquet("/tmp/photon/test.parquet").createOrReplaceTempView("photon_test_table")
+# MAGIC spark.sql("SELECT COUNT(*), SUM(value) FROM photon_test_table").collect().foreach(println)
