@@ -44,7 +44,7 @@ This workshop requires a running Databricks workspace. If you are an existing Da
 
 ## DBR Version
 
-The features used in this workshop require `DBR 8.2`.
+The features used in this workshop require `DBR 8.3`.
 
 ## Repos
 
