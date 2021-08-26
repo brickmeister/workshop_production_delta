@@ -1,7 +1,7 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC 
-# MAGIC # Intro to Unified Delta Processing and the Medaallion Architecture
+# MAGIC # Intro to Unified Delta Processing and the Medallion Architecture
 # MAGIC 
 # MAGIC One of the hallmark innovations of Databricks and the Lakehouse vision is the establishing of a unified method for writing and reading data in a data lake. This unification of batch and streaming jobs has been called the post-lambda architecture for data warehousing. The flexibility, simplicity, and scalability of the new delta lake architecture has been pivotal towards addressing big data needs and has been gifted to the Linux Foundation. Fundamental to the lakehouse view of ETL/ELT is the usage of a multi-hop data architecture known as the medallion architecture.
 # MAGIC 
@@ -370,9 +370,9 @@
 
 # COMMAND ----------
 
-# MAGIC %sql
+# MAGIC %fs
 # MAGIC 
-# MAGIC DESCRIBE EXTENDED LENDING_CLUB_STREAM_SILVER;
+# MAGIC ls dbfs:/user/hive/warehouse/lending_club_stream_gold
 
 # COMMAND ----------
 
