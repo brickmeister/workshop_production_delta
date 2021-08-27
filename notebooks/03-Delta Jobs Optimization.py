@@ -10,7 +10,7 @@
 # MAGIC |Jobs| Production level automated runs of ETL/ML Pipelines|https://docs.databricks.com/jobs.html|
 # MAGIC |Cluster Tuning | Controlling the knobs associated with eeking out maximal performance|https://docs.databricks.com/clusters/configure.html|
 # MAGIC |DAG Tuning | Controlling the stages associated with a Spark Job and a Query Execution Plan | https://databricks.com/session/understanding-query-plans-and-spark-uis|
-# MAGIC |Logs | Spark Driver and Cluster Logs that provide execution and autoscaling details | https://docs.databricks.com/spark/latest/rdd-streaming/debugging-streaming-applications.html|
+# MAGIC |Logs | Spark Driver and Cluster Logs that provide execution and autoscaling details | https://databricks.com/session/understanding-query-plans-and-spark-uis|
 # MAGIC 
 # MAGIC Useful blogs to understand how Delta Lake performance tuning works are listed below.
 # MAGIC * [Best Practices](https://docs.databricks.com/delta/best-practices.html)
@@ -151,16 +151,6 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
-# MAGIC ## Event Log
-# MAGIC 
-# MAGIC Look at the cluster event logs to determine if there were any autoscaling issues. Look specifically for node acquisition issues (due to cloud limits) or lack of autoscaling for an increasing workload size.
-# MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/event%20logs.png?raw=true' /img>
-
-# COMMAND ----------
-
-# MAGIC %md
 # MAGIC ## Driver Logs
 # MAGIC 
 # MAGIC Looking for errors in the driver logs to determine if a job has failed due to an error.
@@ -170,43 +160,9 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### Photon-Enabled Clusters
 # MAGIC 
-# MAGIC By enabling the advice text (`set spark.databricks.adviceGenerator.acceleratedWithPhoton.enabled = true;`), you can trace photon-enabled clusters logs in the INFO section of Driver logs under Log4j output. Look specifically for "Accelerated with photon" in the logs to find out how much your queries and workloads accelerated by photon.
+# MAGIC ## Event Log
 # MAGIC 
-# MAGIC <img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em" src="https://files.training.databricks.com/static/images/icon-warning.svg"/, width = 25> 
-# MAGIC ** Advice text is disabled by default**, and you have to enable it in advance, prior to running your queries.
-
-# COMMAND ----------
-
-# MAGIC %sql
+# MAGIC Look at the cluster event logs to determine if there were any autoscaling issues. Look specifically for node acquisition issues (due to cloud limits) or lack of autoscaling for an increasing workload size.
 # MAGIC 
-# MAGIC set spark.databricks.adviceGenerator.acceleratedWithPhoton.enabled = true;
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/DriverLog_AcceleratedwithPhotonEnabled.png' /img> 
-
-# COMMAND ----------
-
-# DBTITLE 1,Run Explain on Photon-Enabled Cluster
-# MAGIC %scala
-# MAGIC 
-# MAGIC sc.range(0, 100).toDF.write.mode(SaveMode.Overwrite).parquet("/tmp/photon/test.parquet")
-# MAGIC spark.read.parquet("/tmp/photon/test.parquet").createOrReplaceTempView("photon_test_table")
-# MAGIC spark.sql("EXPLAIN SELECT COUNT(*), SUM(value) FROM photon_test_table").collect().foreach(println)
-
-# COMMAND ----------
-
-# DBTITLE 1,Run Explain when Photon is Disabled
-# MAGIC %md
-# MAGIC 
-# MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/PhotonDisabledQueryPlan.png' /img> 
-
-# COMMAND ----------
-
-# MAGIC %scala
-# MAGIC sc.range(0, 100).toDF.write.mode(SaveMode.Overwrite).parquet("/tmp/photon/test.parquet")
-# MAGIC spark.read.parquet("/tmp/photon/test.parquet").createOrReplaceTempView("photon_test_table")
-# MAGIC spark.sql("SELECT COUNT(*), SUM(value) FROM photon_test_table").collect().foreach(println)
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/event%20logs.png?raw=true' /img>

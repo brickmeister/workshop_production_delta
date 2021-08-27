@@ -21,16 +21,15 @@ This repository contains the notebooks that are used in the workshop to demonstr
 
 * [Lakehouse Whitepaper](https://databricks.com/wp-content/uploads/2020/12/cidr_lakehouse.pdf)
 * [Delta Lake Primer](https://databricks.com/wp-content/uploads/2019/01/Databricks-Delta-Technical-Guide.pdf)
-* [Delta Live Tables](https://databricks.com/blog/2021/05/27/announcing-the-launch-of-delta-live-tables-reliable-data-engineering-made-easy.html)
-* [Photon Execution Engine](https://databricks.com/blog/2021/06/17/announcing-photon-public-preview-the-next-generation-query-engine-on-the-databricks-lakehouse-platform.html)
 
 # Workshop Flow
 
-The workshop consists of 4 interactive sections that are separated by 4 notebooks located in the notebooks folder in this repository. Each is run sequentially as we explore the abilities of the lakehouse from data ingestion, data curation, and performance optimizations
+The workshop consists of 4 interactive sections that are separated by 4 notebooks located in the notebooks folder in this repository. Each is run sequentially as we explore the abilities of the lakehouse from data ingestion, data curation, and performance optimizations.
+
 |Notebook|Summary|
 |--------|-------|
-|`01-Intro to Unified Delta Processing.py`|Processing and ingesting data at scale utilizing databricks tunables and the medallion architecture|
-|`02-DLT for Data Engineering Pipelines.py`|Curating data and pipelining it via Delta Live Tables (DLT)|
+|`01-Intro to Unified Delta Processing.py`|Processing and ingesting data at scale utilizing databricks tunables|
+|`02-Medallion Architecture.py`|Curating data and pipelining it via a medallion architecture|
 |`03-Delta Jobs Optimization.py`|Debugging and understanding delta lake performance|
 |`04-Production Compliance.py`|Handy delta lake features for production compliant workloads|
 
@@ -44,7 +43,7 @@ This workshop requires a running Databricks workspace. If you are an existing Da
 
 ## DBR Version
 
-The features used in this workshop require `DBR 8.3`.
+The features used in this workshop require `DBR 8.2`.
 
 ## Repos
 
