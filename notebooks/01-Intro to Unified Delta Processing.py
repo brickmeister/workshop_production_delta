@@ -372,7 +372,7 @@
 
 # MAGIC %fs
 # MAGIC 
-# MAGIC ls dbfs:/user/hive/warehouse/lending_club_stream_gold
+# MAGIC ls dbfs:/user/hive/warehouse/lending_club_stream_silver
 
 # COMMAND ----------
 
@@ -445,7 +445,7 @@
 
 # MAGIC %python
 # MAGIC 
-# MAGIC display(df_lending_club_delta.select("next_pymnt_d").na.drop().distinct())
+# MAGIC display(df_silver.select("next_pymnt_d").na.drop().distinct())
 
 # COMMAND ----------
 
