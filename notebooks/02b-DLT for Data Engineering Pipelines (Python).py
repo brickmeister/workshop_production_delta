@@ -16,25 +16,31 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Imports and Cloud storage paths for ingest, delta lake and checkpoints
+# MAGIC ## Imports Libraries
 # MAGIC It's necessary to import the `dlt` Python module to use the associated methods.
 # MAGIC 
 # MAGIC Here, we also import `pyspark.sql.functions`.
 
 # COMMAND ----------
 
+import dlt
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
-import json
 
-username = "mojgan.mazouchi@databricks.com"
-userPrefix = username.split("@")[0].replace(".", "")
-basePath = "/mnt/morgan-demo/" + username + "/autoloaderDemo"
-landingZoneLocation = basePath + "/landingZone"
-schemaLocation = basePath + "/schemaStore"
-bronzeTableLocation = basePath + "/datastore/bronzeTbl" 
-bronzeCheckPointLocation = basePath + "/datastore/bronzeCheckpoint"
-spark.conf.set("c.bronzeTablePath", "dbfs:" + bronzeTableLocation)
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
+# MAGIC ## Set up Configurations
+
+# COMMAND ----------
+
+"""
+Set up configuration 
+"""
+
+inputData1 =  'GradeA' #spark.conf.get("advancingdlt.pipeline.entityName1") 
+inputData2 =  'GradeB' #spark.conf.get("advancingdlt.pipeline.entityName2") 
 
 # COMMAND ----------
 
@@ -46,97 +52,28 @@ spark.conf.set("c.bronzeTablePath", "dbfs:" + bronzeTableLocation)
 # MAGIC If you're unfamiliar with Python decorators, just note that they are functions or classes preceded with the `@` sign that interact with the next function present in a Python script.
 # MAGIC 
 # MAGIC The `@dlt.table` decorator is the basic method for turning a Python function into a Delta Live Table.
-# MAGIC 
-# MAGIC The function must return a PySpark or Koalas DataFrame. Here we're using [Auto Loader](https://docs.databricks.com/spark/latest/structured-streaming/auto-loader.html) to incrementally ingest files from object storage.
-
-# COMMAND ----------
-
-# DBTITLE 1,Load sample data and create test batches
-sourceDF = (spark.read.format("csv") \
-                  .option("inferSchema", "true") \
-                  .option("header", "true") \
-                  .load("dbfs:/databricks-datasets/lending-club-loan-stats/LoanStats_2018Q2.csv")
-               )
-
-
-batch1 = sourceDF.filter(sourceDF.grade=="A")
-batch2 =sourceDF.filter(sourceDF.grade=="B")
-batch3 = sourceDF.filter(sourceDF.grade=="C")
-
-# COMMAND ----------
-
-# DBTITLE 1,Write batch-1 Data to S3
-batch1.write.parquet(landingZoneLocation)
-
-# COMMAND ----------
-
-inputData1 =  spark.conf.get("advancingdlt.pipeline.entityName1") #'LendingclubGradeA'
-inputData2 =  spark.conf.get("advancingdlt.pipeline.entityName2") #'LendingclubGradeB'
-dataPath = landingZoneLocation
-print(dataPath)
-
-# COMMAND ----------
-
-# DBTITLE 1,Setup Expectations
-# MAGIC %sql
-# MAGIC 
-# MAGIC drop table config.sources;
-# MAGIC 
-# MAGIC create database if not exists Config;
-# MAGIC 
-# MAGIC create table if not exists config.sources
-# MAGIC (TableName string,
-# MAGIC ReadOptions string,
-# MAGIC Expectations string
-# MAGIC );
-# MAGIC 
-# MAGIC insert into config.sources
-# MAGIC select 'LendingclubGradeA', '{"Header":"True", "Sep":",","inferSchema":"True"}','{"Valid_loan_status":"loan_status IS NOT NULL" , "Valid_loan_amnt" : "loan_amnt>1500"}';
-# MAGIC 
-# MAGIC insert into config.sources
-# MAGIC select 'LendingclubGradeB', '{"Header":"True", "Sep":",","inferSchema":"True"}','{"Valid_loan_status":"loan_status IS NOT NULL" , "Valid_loan_amnt" : "loan_amnt>1500"}';
-# MAGIC 
-# MAGIC select * from config.sources
-
-# COMMAND ----------
-
-# DBTITLE 0,Imports
-import json
-
-conf = spark.table("config.sources").filter(f"TableName = '{inputData1}'").first()
-dfconf = json.loads(conf.ReadOptions)
-expectconf = json.loads(conf.Expectations)
-
-print(f"data frame options: {dfconf}")
-print(f"expectations: {expectconf}")
-
-# COMMAND ----------
-
-df = spark.read.options(**dfconf).parquet(dataPath)
-
-display(df)
 
 # COMMAND ----------
 
 # DBTITLE 1,Ingest raw data - Bronze Layer
-import dlt
+"""
+Creating raw delta live tables
+"""
 
-@dlt.create_table(name=f"DLT_{inputData1}",
-  comment="Raw dataset ingested from /databricks-datasets."
+
+@dlt.create_table(name=f"{inputData1}",
+  comment="Raw batch 1 dataset ingested from /databricks-datasets - Grade A."
 )
 
-def data_raw():          
-  return (spark.readStream.options(**dfconf)\
-            .format("cloudFiles")\
-            .option("cloudFiles.format", "parquet") \
-            .option("cloudFiles.schemaLocation", schemaLocation)\
-            .option("cloudFiles.validateOptions", "false") \
-            .option("cloudFiles.region", "us-west-2") \
-            .option("cloudFiles.includeExistingFiles", "true") \
-            #.option("cloudFiles.useNotifications", "true")
-            .option("cloudFiles.allowOverwrites", "true")   
-            .option("failOnUnknownFields", "true")\
-            .schema(sourceDF.schema).load(dataPath))
+def data_raw_GradeA():          
+  return (spark.read.option("inferSchema", "true").option("Header","True").option("Sep",",").csv("dbfs:/databricks-datasets/lending-club-loan-stats/LoanStats_2018Q2.csv")).where("grade=='A'")
+
+@dlt.create_table(name=f"{inputData2}",
+  comment="Raw batch 2 dataset ingested from /databricks-datasets - Grade B."
+)
+
+def data_raw_GradeB():          
+  return (spark.read.option("inferSchema", "true").option("Header","True").option("Sep",",").csv("dbfs:/databricks-datasets/lending-club-loan-stats/LoanStats_2018Q2.csv")).where("grade=='B'")
 
 # COMMAND ----------
 
@@ -155,95 +92,72 @@ def data_raw():
 
 # COMMAND ----------
 
-# DBTITLE 1,Clean and prepare data - Quality Check Table 1
-@dlt.table(name=f"DLT_prepared_{inputData1}",
+# DBTITLE 0,Set up Quality Check
+"""
+Setting up expectations for quality check
+"""
+
+@dlt.table(name=f"Expected_{inputData1}",
   comment="Grade A data cleaned and prepared for analysis."
 )
-@dlt.expect_all(expectconf)
+@dlt.expect_or_drop("valid loan_amnt","loan_amnt>1500")
 
 def data_prepared():
   return (
-    dlt.read(f"DLT_{inputData1}").withColumnRenamed("addr_state", "state")\
-          .select("loan_amnt", "funded_amnt", "term", "int_rate", "grade", "emp_title", "emp_length", "home_ownership", "annual_inc", "verification_status", "loan_status","state","total_pymnt")
+    dlt.read(f"{inputData1}")
   )
 
-# COMMAND ----------
-
-# DBTITLE 1,Write batch-2 data to S3
-batch2.write.mode("append").parquet(dataPath)
-
-# COMMAND ----------
-
-@dlt.create_table(name=f"DLT_{inputData2}",
-  comment="Grade B Raw dataset ingested from /databricks-datasets."
-)
-
-def data_raw():          
-  return (spark.readStream.options(**dfconf)\
-            .format("cloudFiles")\
-            .option("cloudFiles.format", "parquet") \
-            .option("cloudFiles.schemaLocation", schemaLocation)\
-            .option("cloudFiles.validateOptions", "false") \
-            .option("cloudFiles.region", "us-west-2") \
-            .option("cloudFiles.includeExistingFiles", "true") \
-            #.option("cloudFiles.useNotifications", "true")
-            .option("cloudFiles.allowOverwrites", "true")   
-            .option("failOnUnknownFields", "true")\
-            .schema(sourceDF.schema).load(dataPath))
-
-# COMMAND ----------
-
-# DBTITLE 1,Clean and prepare data - Quality Check Table 2
-@dlt.table(name=f"DLT_prepared_{inputData2}",
+@dlt.table(name=f"Expected_{inputData2}",
   comment="Grade B data cleaned and prepared for analysis."
 )
-@dlt.expect_all(expectconf)
+@dlt.expect_or_drop("valid funded_amnt","funded_amnt>2000")
 
-def data_prepared2():
+def data_prepared():
   return (
-    dlt.read(f"DLT_{inputData2}").withColumnRenamed("addr_state", "state")\
-          .select("loan_amnt", "funded_amnt", "term", "int_rate", "grade", "emp_title", "emp_length", "home_ownership", "annual_inc", "verification_status", "loan_status","state","total_pymnt")
+    dlt.read(f"{inputData2}")
   )
 
 # COMMAND ----------
 
-# DBTITLE 1,Top loanees in MI with Grade A
-@dlt.table(name=f"Top_{inputData1}_GradeA",
+# DBTITLE 1,Extract Top Loanees 
+"""
+Do some data transformation and preprocessing
+"""
+
+@dlt.table(name=f"TopLoanees_{inputData1}",
   comment="A table containing the top loanees with grade A."
 )
 def top_loanees_MI():
   return (
-    dlt.read(f"DLT_prepared_{inputData1}")
-      .filter(expr("state == 'MI'"))
+    dlt.read(f"Expected_{inputData1}")
+      .filter(expr("addr_state == 'MI'"))
       .sort(desc("loan_amnt"))
-      .select("loan_amnt", "funded_amnt", "term", "int_rate", "grade", "emp_title", "emp_length", "home_ownership", "annual_inc", "verification_status", "loan_status","state","total_pymnt" )
       .limit(10)
   )
 
-# COMMAND ----------
-
-# DBTITLE 1,Top loanees in CA with Grade B
-@dlt.table(name=f"Top_{inputData2}_GradeB",
+@dlt.table(name=f"TopLoanees_{inputData2}",
   comment="A table containing the top lonees with grade B."
 )
 def top_loanees_CA():
   return (
-    dlt.read(f"DLT_prepared_{inputData2}")
-      .filter(expr("state == 'CA'"))
+    dlt.read(f"Expected_{inputData2}")
+      .filter(expr("addr_state == 'CA'"))
       .sort(desc("loan_amnt"))
-      .select("loan_amnt", "funded_amnt", "term", "int_rate", "grade", "emp_title", "emp_length", "home_ownership", "annual_inc", "verification_status", "loan_status","state","total_pymnt" )
       .limit(10)
   )
 
 # COMMAND ----------
 
 # DBTITLE 1,Unify Top loanees of Grade A and Grade B
+"""
+Unify cleaned and preprocessed delta live tables
+"""
+
 @dlt.table(name=f"all_Top_lonees",
   comment="A table containing all the top lonees with both grade A and B."
 )
 
 def all_top_lonees():
-    return (dlt.read(f"Top_{inputData1}_GradeA")
-        .union(dlt.read(f"Top_{inputData2}_GradeB"))
-        .select("loan_amnt", "funded_amnt", "term", "int_rate", "grade", "emp_title", "emp_length", "home_ownership", "annual_inc", "verification_status", "loan_status","state","total_pymnt" )
+    return (dlt.read(f"TopLoanees_{inputData1}")
+        .union(dlt.read(f"TopLoanees_{inputData2}"))
     )
