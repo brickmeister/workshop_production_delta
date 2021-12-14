@@ -118,13 +118,24 @@
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC 
+# MAGIC --
+# MAGIC -- Turn on auto compacting for new tables
+# MAGIC --
+# MAGIC 
+# MAGIC set spark.databricks.delta.properties.defaults.autoOptimize.optimizeWrite = false;
+# MAGIC set spark.databricks.delta.properties.defaults.autoOptimize.autoCompact = false;
+
+# COMMAND ----------
+
 # MAGIC %scala
 # MAGIC 
 # MAGIC /*
 # MAGIC   Setup checkpoint directory
 # MAGIC */
 # MAGIC 
-# MAGIC val checkpointDir : String = "/tmp/delta-stream_6";
+# MAGIC val checkpointDir : String = "/tmp/delta-stream_200000000";
 
 # COMMAND ----------
 
@@ -178,7 +189,7 @@
 # MAGIC   Setup checkpoint directory
 # MAGIC */
 # MAGIC 
-# MAGIC val checkpointDir2 : String = "/tmp/delta-stream_7";
+# MAGIC val checkpointDir2 : String = "/tmp/delta-stream_800000000";
 
 # COMMAND ----------
 
@@ -347,7 +358,7 @@
 # MAGIC Specify a checkpoint directory for writing out a stream
 # MAGIC """
 # MAGIC 
-# MAGIC checkpoint_dir_1 : str = "/tmp/silver_check_1"
+# MAGIC checkpoint_dir_1 : str = "/tmp/silver_check_100000000"
 
 # COMMAND ----------
 
@@ -398,7 +409,7 @@
 # MAGIC Specify a checkpoint directory for writing out a stream
 # MAGIC """
 # MAGIC 
-# MAGIC checkpoint_dir_2 : str = "/tmp/silver_check_2"
+# MAGIC checkpoint_dir_2 : str = "/tmp/silver_check_200000000"
 
 # COMMAND ----------
 
@@ -472,7 +483,7 @@
 # MAGIC Specify a checkpoint directory for writing out a stream
 # MAGIC """
 # MAGIC 
-# MAGIC checkpoint_dir_3 : str = "/tmp/gold_check_1"
+# MAGIC checkpoint_dir_3 : str = "/tmp/gold_check_100000000"
 
 # COMMAND ----------
 
@@ -486,7 +497,7 @@
 # MAGIC df_gold.writeStream\
 # MAGIC        .format("delta")\
 # MAGIC        .option("checkpointLocation", checkpoint_dir_3)\
-# MAGIC        .outputMode("update")\
+# MAGIC        .outputMode("complete")\
 # MAGIC        .table("lending_club_stream_gold")
 
 # COMMAND ----------
