@@ -44,6 +44,22 @@ inputData2 =  'GradeB' #spark.conf.get("advancingdlt.pipeline.entityName2")
 
 # COMMAND ----------
 
+"""
+Setup a data set to read schema
+"""
+
+@dlt.create_table(name = "lending_club_schema",
+                  comment = "Small table to get lending club schema")
+
+def data_raw_lending_club_schema():
+  ## get the schema from the parquet files
+  return (spark.read.format("parquet")
+               .option("inferSchema", True)
+               .load("dbfs:/databricks-datasets/samples/lending_club/parquet/*.parquet")
+               .limit(10))
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ## DLT Python Syntax
 # MAGIC 
@@ -52,6 +68,66 @@ inputData2 =  'GradeB' #spark.conf.get("advancingdlt.pipeline.entityName2")
 # MAGIC If you're unfamiliar with Python decorators, just note that they are functions or classes preceded with the `@` sign that interact with the next function present in a Python script.
 # MAGIC 
 # MAGIC The `@dlt.table` decorator is the basic method for turning a Python function into a Delta Live Table.
+
+# COMMAND ----------
+
+"""
+Ingestion Data
+"""
+
+from pyspark.sql.functions import to_timestamp, col
+
+@dlt.create_table(name="lending_club_raw",
+                  comment = "Raw Lending Club Data")
+
+def data_raw_lending_club_raw():
+  return(spark.readStream.format("parquet")              
+               .schema(dlt.read("lending_club_schema").schema)
+              .load("dbfs:/databricks-datasets/samples/lending_club/parquet/*.parquet")
+              .withColumn("earliest_cr_line", to_timestamp(col("earliest_cr_line"), "MMM-yyyy"))
+              .withColumn("last_pymnt_d", to_timestamp(col("last_pymnt_d"), "MMM-yyyy"))
+              .withColumn("next_pymnt_d", to_timestamp(col("next_pymnt_d"), "MMM-yyyy"))
+              .withColumn("issue_d", to_timestamp(col("issue_d"), "MMM-yyyy")))
+
+# COMMAND ----------
+
+"""
+State table for valid grades
+"""
+
+@dlt.create_table(name="lending_club_cleaned",
+                  comment = "Lending Club Grade state")
+
+def data_raw_lending_club_cleaned():
+  return(dlt.read_stream("lending_club_raw").distinct())
+
+# COMMAND ----------
+
+"""
+State table for valid grades
+"""
+
+@dlt.create_table(name="lending_club_grades",
+                  comment = "Lending Club Grade state")
+
+def data_raw_lending_club_grades():
+  return(dlt.read("lending_club_cleaned")
+            .select("grade")
+            .distinct())
+
+# COMMAND ----------
+
+"""
+State table for valid payment dates
+"""
+
+@dlt.create_table(name="lending_club_payment_dates",
+                  comment = "Lending Club Payment Dates")
+
+def data_raw_lending_club_paymnt_dates():
+  return(dlt.read("lending_club_cleaned")
+            .select("next_pymnt_d")
+            .distinct())
 
 # COMMAND ----------
 
@@ -66,14 +142,14 @@ Creating raw delta live tables
 )
 
 def data_raw_GradeA():          
-  return (spark.read.option("inferSchema", "true").option("Header","True").option("Sep",",").csv("dbfs:/databricks-datasets/lending-club-loan-stats/LoanStats_2018Q2.csv")).where("grade=='A'")
+  return (dlt.read_stream("lending_club_cleaned").where("grade=='A'"))
 
 @dlt.create_table(name=f"{inputData2}",
   comment="Raw batch 2 dataset ingested from /databricks-datasets - Grade B."
 )
 
 def data_raw_GradeB():          
-  return (spark.read.option("inferSchema", "true").option("Header","True").option("Sep",",").csv("dbfs:/databricks-datasets/lending-club-loan-stats/LoanStats_2018Q2.csv")).where("grade=='B'")
+  return (dlt.read_stream("lending_club_cleaned").where("grade=='B'"))
 
 # COMMAND ----------
 
@@ -104,7 +180,7 @@ Setting up expectations for quality check
 
 def data_prepared():
   return (
-    dlt.read(f"{inputData1}")
+    dlt.read_stream(f"{inputData1}")
   )
 
 @dlt.table(name=f"Expected_{inputData2}",
@@ -114,7 +190,7 @@ def data_prepared():
 
 def data_prepared():
   return (
-    dlt.read(f"{inputData2}")
+    dlt.read_stream(f"{inputData2}")
   )
 
 # COMMAND ----------
