@@ -24,7 +24,7 @@
 # MAGIC 
 # MAGIC Jobs results are stored for up to 60 days. You can export job results to an external storage for longer term auditing. Looking at these job runs allows historical analyis of different pipelines.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/jobs%20UI.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/jobs%20UI.png?raw=true'>
 
 # COMMAND ----------
 
@@ -34,7 +34,7 @@
 # MAGIC 
 # MAGIC Setup alerts for delta job success and failure. Currently these jobs utilize an emailing alert that can be sent on job start, success, and failure.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/alerts.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/alerts.png?raw=true'>
 
 # COMMAND ----------
 
@@ -44,7 +44,7 @@
 # MAGIC 
 # MAGIC Setup retries to restart delta jobs when they fail. This is used to ensure there is a degree of fault tolerance associated with mission critical pipelines.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/retries.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/retries.png?raw=true'>
 
 # COMMAND ----------
 
@@ -53,7 +53,7 @@
 # MAGIC ## Timeouts
 # MAGIC When certain jobs hang, measure the expected time a job will take and set a timeout about 1.5x that time to reduce wasted resources.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/timeouts.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/timeouts.png?raw=true'>
 
 # COMMAND ----------
 
@@ -63,7 +63,7 @@
 # MAGIC 
 # MAGIC Setup concurrent runs to allow multiple versions of a job to run simultaneously. This is useful when jobs contain different parameters to produce different flavors of a job that utilize the same template.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/concurrent%20runs.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/concurrent%20runs.png?raw=true'>
 
 # COMMAND ----------
 
@@ -73,7 +73,7 @@
 # MAGIC 
 # MAGIC Schedule jobs to ensure they meet SLAs.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/schedule.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/schedule.png?raw=true'>
 
 # COMMAND ----------
 
@@ -91,7 +91,7 @@
 # MAGIC 
 # MAGIC Databricks cluster performance can be observed in the Ganglia UI which runs live on the cluster.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/ganglia%20ui.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/ganglia%20ui.png?raw=true'>
 
 # COMMAND ----------
 
@@ -100,7 +100,7 @@
 # MAGIC 
 # MAGIC Databricks takes a snapshot of the live Ganglia Metrics UI every 15 mintues
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/historical%20ganglia%20metrics.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/historical%20ganglia%20metrics.png?raw=true'>
 
 # COMMAND ----------
 
@@ -118,7 +118,7 @@
 # MAGIC 
 # MAGIC When measuring structured streaming performance for delta use cases, you can look at the observed average throughputs of the different streams running on the cluster and determine if they meet your SLAs.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/structured%20streaming%20stats.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/structured%20streaming%20stats.png?raw=true'>
 
 # COMMAND ----------
 
@@ -128,7 +128,7 @@
 # MAGIC 
 # MAGIC Every job in Spark consists of a series of spark tasks which form a directed acyclic graph (DAG). Examining these DAGs can help identify bottleneck stages to determine where more performance can be extracted. Notice the IO stats below the DAG to determine if portions of the job are spent on ingress/egress of data, or there is a lot of garbage collection going on.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/spark_dag.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/spark_dag.png?raw=true'>
 
 # COMMAND ----------
 
@@ -138,7 +138,7 @@
 # MAGIC 
 # MAGIC Databricks leverages filesystem caches to reduce ingress/egress from cloud object storage. The more the cache is leveraged, the less network I/O is needed and the faster the job will run. When you have multiple workloads that leverage the same table, running those workloads on the same cluster can reduce processing time since the underlying parquet files will not be constantly retrieved from object storage.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/storage%20cache%20stats.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/storage%20cache%20stats.png?raw=true'>
 
 # COMMAND ----------
 
@@ -156,7 +156,7 @@
 # MAGIC 
 # MAGIC Look at the cluster event logs to determine if there were any autoscaling issues. Look specifically for node acquisition issues (due to cloud limits) or lack of autoscaling for an increasing workload size.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/event%20logs.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/event%20logs.png?raw=true'>
 
 # COMMAND ----------
 
@@ -165,7 +165,7 @@
 # MAGIC 
 # MAGIC Looking for errors in the driver logs to determine if a job has failed due to an error.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/driver%20logs.png?raw=true' /img> 
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/driver%20logs.png?raw=true'> 
 
 # COMMAND ----------
 
@@ -174,8 +174,9 @@
 # MAGIC 
 # MAGIC By enabling the advice text (`set spark.databricks.adviceGenerator.acceleratedWithPhoton.enabled = true;`), you can trace photon-enabled clusters logs in the INFO section of Driver logs under Log4j output. Look specifically for "Accelerated with photon" in the logs to find out how much your queries and workloads accelerated by photon.
 # MAGIC 
-# MAGIC <img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em" src="https://files.training.databricks.com/static/images/icon-warning.svg"/, width = 25> 
-# MAGIC ** Advice text is disabled by default**, and you have to enable it in advance, prior to running your queries.
+# MAGIC <img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em; width:25" src="https://files.training.databricks.com/static/images/icon-warning.svg">
+# MAGIC 
+# MAGIC **Advice text is disabled by default**, and you have to enable it in advance, prior to running your queries.
 
 # COMMAND ----------
 
@@ -186,7 +187,7 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/DriverLog_AcceleratedwithPhotonEnabled.png' /img> 
+# MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/DriverLog_AcceleratedwithPhotonEnabled.png'> 
 
 # COMMAND ----------
 
@@ -202,7 +203,7 @@
 # DBTITLE 1,Run Explain when Photon is Disabled
 # MAGIC %md
 # MAGIC 
-# MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/PhotonDisabledQueryPlan.png' /img> 
+# MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/PhotonDisabledQueryPlan.png'> 
 
 # COMMAND ----------
 

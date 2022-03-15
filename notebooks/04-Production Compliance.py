@@ -5,7 +5,7 @@
 # MAGIC 
 # MAGIC When it comes to developing and validating a production level lakehouse, there are several critical features that are often required.
 # MAGIC 
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/Delta%20Lake%20Primer.png?raw=true' /img>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/Delta%20Lake%20Primer.png?raw=true'>
 # MAGIC 
 # MAGIC |Feature| Use| Links|
 # MAGIC |-------|----|------|
