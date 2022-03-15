@@ -8,7 +8,7 @@
 # MAGIC %scala
 # MAGIC 
 # MAGIC /*
-# MAGIC   Setup a data set to create gzipped json files
+# MAGIC   Setup a data set to write to bronze table
 # MAGIC */
 # MAGIC 
 # MAGIC import org.apache.spark.sql.functions.rand;

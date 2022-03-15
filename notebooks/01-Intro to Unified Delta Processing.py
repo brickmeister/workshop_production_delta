@@ -18,7 +18,7 @@
 
 # MAGIC %md
 # MAGIC 
-# MAGIC # Setup a delta stream   
+# MAGIC # Setup a Delta stream   
 
 # COMMAND ----------
 
@@ -44,7 +44,7 @@
 # MAGIC %scala
 # MAGIC 
 # MAGIC /*
-# MAGIC   Setup a data set to create gzipped json files
+# MAGIC   Setup a data set to write to bronze table
 # MAGIC */
 # MAGIC 
 # MAGIC import org.apache.spark.sql.functions.rand;
@@ -65,7 +65,7 @@
 # MAGIC 
 # MAGIC ## Spark Structured Streaming                                                   
 # MAGIC 
-# MAGIC <img src="https://github.com/brickmeister/workshop_production_delta/blob/main/img/structuredStreaming.png?raw=true", width = 600> 
+# MAGIC <img width = 600 src="https://github.com/brickmeister/workshop_production_delta/blob/main/img/structuredStreaming.png?raw=true"> 
 
 # COMMAND ----------
 
@@ -97,7 +97,7 @@
 # MAGIC 
 # MAGIC 
 # MAGIC 
-# MAGIC <img src="https://github.com/brickmeister/workshop_production_delta/blob/main/img/checkpoint.png?raw=true", width = 500> 
+# MAGIC <img  width = 500 src="https://github.com/brickmeister/workshop_production_delta/blob/main/img/checkpoint.png?raw=true"> 
 
 # COMMAND ----------
 
@@ -125,6 +125,7 @@
 # MAGIC */
 # MAGIC 
 # MAGIC val checkpointDir : String = "/tmp/delta-stream_6";
+# MAGIC dbutils.fs.rm(checkpointDir, true)
 
 # COMMAND ----------
 
@@ -179,6 +180,7 @@
 # MAGIC */
 # MAGIC 
 # MAGIC val checkpointDir2 : String = "/tmp/delta-stream_7";
+# MAGIC dbutils.fs.rm(checkpointDir2, true)
 
 # COMMAND ----------
 
@@ -279,7 +281,7 @@
 # MAGIC --
 # MAGIC 
 # MAGIC SELECT avg(regexp_replace(int_rate, "\\%", "")) as AVG_PERCENT
-# MAGIC FROM lending_club_stream_no_compact
+# MAGIC FROM lending_club_stream_compact
 # MAGIC WHERE TERM = ' 36 months';
 
 # COMMAND ----------
@@ -290,7 +292,7 @@
 # MAGIC -- Optimize and Z-order by length of loan and interest rate
 # MAGIC --
 # MAGIC 
-# MAGIC OPTIMIZE LENDING_CLUB_STREAM_NO_COMPACT
+# MAGIC OPTIMIZE LENDING_CLUB_STREAM_COMPACT
 # MAGIC ZORDER BY TERM, INT_RATE;
 
 # COMMAND ----------
@@ -302,7 +304,7 @@
 # MAGIC --
 # MAGIC 
 # MAGIC SELECT avg(regexp_replace(int_rate, "\\%", "")) as AVG_PERCENT
-# MAGIC FROM lending_club_stream_no_compact
+# MAGIC FROM lending_club_stream_compact
 # MAGIC WHERE TERM = ' 36 months';
 
 # COMMAND ----------
@@ -348,6 +350,7 @@
 # MAGIC """
 # MAGIC 
 # MAGIC checkpoint_dir_1 : str = "/tmp/silver_check_1"
+# MAGIC dbutils.fs.rm(checkpoint_dir_1, True)
 
 # COMMAND ----------
 
@@ -399,6 +402,7 @@
 # MAGIC """
 # MAGIC 
 # MAGIC checkpoint_dir_2 : str = "/tmp/silver_check_2"
+# MAGIC dbutils.fs.rm(checkpoint_dir_2, True)
 
 # COMMAND ----------
 
@@ -473,6 +477,7 @@
 # MAGIC """
 # MAGIC 
 # MAGIC checkpoint_dir_3 : str = "/tmp/gold_check_1"
+# MAGIC dbutils.fs.rm(checkpoint_dir_3, True)
 
 # COMMAND ----------
 
