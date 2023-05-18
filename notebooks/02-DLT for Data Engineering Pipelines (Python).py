@@ -1,14 +1,14 @@
 # Databricks notebook source
 # MAGIC %md # Delta Live Tables - Lending Club (Python)
-# MAGIC 
+# MAGIC
 # MAGIC This notebook uses Python to declare Delta Live Tables. Note that this syntax is not intended for interactive execution in a notebook.
-# MAGIC 
+# MAGIC
 # MAGIC [Complete documentation of DLT syntax is available here](https://docs.databricks.com/data-engineering/delta-live-tables/delta-live-tables-language-ref.html#python).
-# MAGIC 
+# MAGIC
 # MAGIC [Delta Live Tables API guide](https://docs.databricks.com/data-engineering/delta-live-tables/delta-live-tables-api-guide.html#get-pipeline-details)
-# MAGIC 
+# MAGIC
 # MAGIC This notebook provides an example Delta Live Tables pipeline to:
-# MAGIC 
+# MAGIC
 # MAGIC - Read raw data into a table.
 # MAGIC - Read records from the raw data table and use a Delta Live Tables query and expectations to create a new table with cleaned and prepared data.
 # MAGIC - Perform an analysis on the prepared data with a Delta Live Tables query.
@@ -18,7 +18,7 @@
 # MAGIC %md
 # MAGIC ## Imports Libraries
 # MAGIC It's necessary to import the `dlt` Python module to use the associated methods.
-# MAGIC 
+# MAGIC
 # MAGIC Here, we also import `pyspark.sql.functions`.
 
 # COMMAND ----------
@@ -26,11 +26,12 @@
 import dlt
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
+testsetest
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ## Set up Configurations
 
 # COMMAND ----------
@@ -62,11 +63,11 @@ def data_raw_lending_club_schema():
 
 # MAGIC %md
 # MAGIC ## DLT Python Syntax
-# MAGIC 
+# MAGIC
 # MAGIC DLT tables, views, and their associated settings are configured using [decorators](https://www.python.org/dev/peps/pep-0318/#current-syntax).
-# MAGIC 
+# MAGIC
 # MAGIC If you're unfamiliar with Python decorators, just note that they are functions or classes preceded with the `@` sign that interact with the next function present in a Python script.
-# MAGIC 
+# MAGIC
 # MAGIC The `@dlt.table` decorator is the basic method for turning a Python function into a Delta Live Table.
 
 # COMMAND ----------
@@ -155,11 +156,11 @@ def data_raw_GradeB():
 
 # MAGIC %md
 # MAGIC ## Quality Control with Expectations
-# MAGIC 
+# MAGIC
 # MAGIC Data expectations are expressed as simple filters against a field in a table.
-# MAGIC 
+# MAGIC
 # MAGIC DLT currently supports three modes for expectations:
-# MAGIC 
+# MAGIC
 # MAGIC | mode | behavior |
 # MAGIC | --- | --- |
 # MAGIC | `@dlt.expect` | Record metrics for percentage of records that fulfill expectation <br> (**NOTE**: this metric is reported for all execution modes) |
