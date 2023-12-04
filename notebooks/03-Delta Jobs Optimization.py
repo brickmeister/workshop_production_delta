@@ -170,43 +170,15 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### Photon-Enabled Clusters
 # MAGIC
-# MAGIC By enabling the advice text (`set spark.databricks.adviceGenerator.acceleratedWithPhoton.enabled = true;`), you can trace photon-enabled clusters logs in the INFO section of Driver logs under Log4j output. Look specifically for "Accelerated with photon" in the logs to find out how much your queries and workloads accelerated by photon.
-# MAGIC
-# MAGIC <img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em" src="https://files.training.databricks.com/static/images/icon-warning.svg"/> 
-# MAGIC ** Advice text is disabled by default**, and you have to enable it in advance, prior to running your queries.
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC
-# MAGIC set spark.databricks.adviceGenerator.acceleratedWithPhoton.enabled = true;
+# MAGIC # Check Photon Usage
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/DriverLog_AcceleratedwithPhotonEnabled.png'> 
-
-# COMMAND ----------
-
-# DBTITLE 1,Run Explain on Photon-Enabled Cluster
-# MAGIC %scala
 # MAGIC
-# MAGIC sc.range(0, 100).toDF.write.mode(SaveMode.Overwrite).parquet("/tmp/photon/test.parquet")
-# MAGIC spark.read.parquet("/tmp/photon/test.parquet").createOrReplaceTempView("photon_test_table")
-# MAGIC spark.sql("EXPLAIN SELECT COUNT(*), SUM(value) FROM photon_test_table").collect().foreach(println)
-
-# COMMAND ----------
-
-# DBTITLE 1,Run Explain when Photon is Disabled
-# MAGIC %md
+# MAGIC ## Spark DAG
 # MAGIC
-# MAGIC <img src='https://raw.githubusercontent.com/brickmeister/workshop_production_delta/main/img/PhotonDisabledQueryPlan.png'> 
-
-# COMMAND ----------
-
-# MAGIC %scala
-# MAGIC sc.range(0, 100).toDF.write.mode(SaveMode.Overwrite).parquet("/tmp/photon/test.parquet")
-# MAGIC spark.read.parquet("/tmp/photon/test.parquet").createOrReplaceTempView("photon_test_table")
-# MAGIC spark.sql("SELECT COUNT(*), SUM(value) FROM photon_test_table").collect().foreach(println)
+# MAGIC Photon usage can be partially used. Check the spark dag to check whether or not photon is used.
+# MAGIC
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/Photon%20Spark%20Dag.png?raw=true'>

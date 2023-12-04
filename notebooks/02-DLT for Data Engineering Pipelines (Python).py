@@ -26,7 +26,6 @@
 import dlt
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
-testsetest
 
 # COMMAND ----------
 
@@ -132,21 +131,21 @@ def data_raw_lending_club_paymnt_dates():
 
 # COMMAND ----------
 
-# DBTITLE 1,Ingest raw data - Bronze Layer
+# DBTITLE 1,Categorize data - Silver Layer
 """
 Creating raw delta live tables
 """
 
 
 @dlt.create_table(name=f"{inputData1}",
-  comment="Raw batch 1 dataset ingested from /databricks-datasets - Grade A."
+  comment="Silver batch 1 dataset ingested from /databricks-datasets - Grade A."
 )
 
 def data_raw_GradeA():          
   return (dlt.read_stream("lending_club_cleaned").where("grade=='A'"))
 
 @dlt.create_table(name=f"{inputData2}",
-  comment="Raw batch 2 dataset ingested from /databricks-datasets - Grade B."
+  comment="Silver batch 2 dataset ingested from /databricks-datasets - Grade B."
 )
 
 def data_raw_GradeB():          
