@@ -22,41 +22,38 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Generate a random UUID for a database to ensure users don't clash with each other
-# MAGIC """
-# MAGIC
-# MAGIC import uuid
-# MAGIC
-# MAGIC # create a database name
-# MAGIC db_name = str(uuid.uuid4()).replace("-", "_")
-# MAGIC
-# MAGIC # retrieve the name
-# MAGIC print(db_name)
+
+"""
+Generate a random UUID for a database to ensure users don't clash with each other
+"""
+
+import uuid
+
+# create a database name
+db_name = str(uuid.uuid4()).replace("-", "_")
+
+# retrieve the name
+print(db_name)
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Create a database with random UUID
-# MAGIC """
-# MAGIC
-# MAGIC spark.sql(f"DROP DATABASE IF EXISTS {db_name} CASCADE")
-# MAGIC spark.sql(f"CREATE DATABASE IF NOT EXISTS {db_name}")
-# MAGIC spark.sql(f"USE DATABASE {db_name}")
+
+"""
+Create a database with random UUID
+"""
+spark.sql(f"USE CATALOG hive_metastore")
+spark.sql(f"DROP DATABASE IF EXISTS {db_name} CASCADE")
+spark.sql(f"CREATE DATABASE IF NOT EXISTS {db_name}")
+spark.sql(f"USE DATABASE {db_name}")
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Remove checkpoint directories and files
-# MAGIC """
-# MAGIC
-# MAGIC dbutils.fs.rm(f"/tmp/{db_name}", True)
+
+"""
+Remove checkpoint directories and files
+"""
+
+dbutils.fs.rm(f"/tmp/{db_name}", True)
 
 # COMMAND ----------
 
@@ -85,19 +82,18 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Setup a data set to create gzipped json files
-# MAGIC """
-# MAGIC
-# MAGIC # get the schema from the parquet files
-# MAGIC file_schema = (spark.read
-# MAGIC                     .format("parquet")
-# MAGIC                     .option("inferSchema", True)
-# MAGIC                     .load("dbfs:/databricks-datasets/samples/lending_club/parquet/*.parquet")
-# MAGIC                     .limit(10)
-# MAGIC                     .schema)
+
+"""
+Setup a data set to create gzipped json files
+"""
+
+# get the schema from the parquet files
+file_schema = (spark.read
+                    .format("parquet")
+                    .option("inferSchema", True)
+                    .load("dbfs:/databricks-datasets/samples/lending_club/parquet/*.parquet")
+                    .limit(10)
+                    .schema)
 
 # COMMAND ----------
 
@@ -109,26 +105,25 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC from pyspark.sql.functions import to_timestamp, col
-# MAGIC
-# MAGIC """
-# MAGIC Read lending club stream
-# MAGIC """
-# MAGIC
-# MAGIC # get the schema from the parquet files
-# MAGIC dfLendingClub = (spark.readStream
-# MAGIC                       .format("parquet")
-# MAGIC                       .schema(file_schema)
-# MAGIC                       .load("dbfs:/databricks-datasets/samples/lending_club/parquet/*.parquet")
-# MAGIC                       .withColumn("earliest_cr_line", to_timestamp(col("earliest_cr_line"), "MMM-yyyy"))
-# MAGIC                       .withColumn("last_pymnt_d", to_timestamp(col("last_pymnt_d"), "MMM-yyyy"))
-# MAGIC                       .withColumn("next_pymnt_d", to_timestamp(col("next_pymnt_d"), "MMM-yyyy"))
-# MAGIC                       .withColumn("issue_d", to_timestamp(col("issue_d"), "MMM-yyyy")))
-# MAGIC
-# MAGIC # See the dataframe
-# MAGIC display(dfLendingClub)
+
+from pyspark.sql.functions import to_timestamp, col
+
+"""
+Read lending club stream
+"""
+
+# get the schema from the parquet files
+dfLendingClub = (spark.readStream
+                      .format("parquet")
+                      .schema(file_schema)
+                      .load("dbfs:/databricks-datasets/samples/lending_club/parquet/*.parquet")
+                      .withColumn("earliest_cr_line", to_timestamp(col("earliest_cr_line"), "MMM-yyyy"))
+                      .withColumn("last_pymnt_d", to_timestamp(col("last_pymnt_d"), "MMM-yyyy"))
+                      .withColumn("next_pymnt_d", to_timestamp(col("next_pymnt_d"), "MMM-yyyy"))
+                      .withColumn("issue_d", to_timestamp(col("issue_d"), "MMM-yyyy")))
+
+# See the dataframe
+display(dfLendingClub)
 
 # COMMAND ----------
 
@@ -147,27 +142,25 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Setup checkpoint directory
-# MAGIC """
-# MAGIC
-# MAGIC checkpoint_dir = f"/tmp/{db_name}/bronze";
+
+"""
+Setup checkpoint directory
+"""
+
+checkpoint_dir = f"/tmp/{db_name}/bronze";
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Write the stream to delta lake
-# MAGIC """
-# MAGIC
-# MAGIC (dfLendingClub.writeStream
-# MAGIC               .format("delta")
-# MAGIC               .option("checkpointLocation", checkpoint_dir)
-# MAGIC               .option("path", f"/tmp/{db_name}/lending_club_stream_no_compact")
-# MAGIC               .toTable("lending_club_stream_no_compact"))
+
+"""
+Write the stream to delta lake
+"""
+
+(dfLendingClub.writeStream
+              .format("delta")
+              .option("checkpointLocation", checkpoint_dir)
+              .option("path", f"/tmp/{db_name}/lending_club_stream_no_compact")
+              .toTable("lending_club_stream_no_compact"))
 
 # COMMAND ----------
 
@@ -177,9 +170,8 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC display(dbutils.fs.ls(f"dbfs:/tmp/{db_name}/lending_club_stream_no_compact"))
+
+display(dbutils.fs.ls(f"dbfs:/tmp/{db_name}/lending_club_stream_no_compact"))
 
 # COMMAND ----------
 
@@ -202,27 +194,25 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Setup checkpoint directory
-# MAGIC """
-# MAGIC
-# MAGIC checkpointDir2 = f"/tmp/{db_name}/bronze_compact";
+
+"""
+Setup checkpoint directory
+"""
+
+checkpointDir2 = f"/tmp/{db_name}/bronze_compact";
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Write the stream to delta lake
-# MAGIC """
-# MAGIC
-# MAGIC (dfLendingClub.writeStream
-# MAGIC               .format("delta")
-# MAGIC               .option("checkpointLocation", checkpointDir2)
-# MAGIC               .option("path", f"/tmp/{db_name}/lending_club_stream_compact")
-# MAGIC               .table("lending_club_stream_compact"))
+
+"""
+Write the stream to delta lake
+"""
+
+(dfLendingClub.writeStream
+              .format("delta")
+              .option("checkpointLocation", checkpointDir2)
+              .option("path", f"/tmp/{db_name}/lending_club_stream_compact")
+              .table("lending_club_stream_compact"))
 
 # COMMAND ----------
 
@@ -232,9 +222,8 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC display(dbutils.fs.ls(f"dbfs:/tmp/{db_name}/lending_club_stream_compact"))
+
+display(dbutils.fs.ls(f"dbfs:/tmp/{db_name}/lending_club_stream_compact"))
 
 # COMMAND ----------
 
@@ -255,19 +244,18 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC from pyspark.sql.functions import DataFrame
-# MAGIC
-# MAGIC """
-# MAGIC Do some data deduplication on ingestion streams
-# MAGIC """
-# MAGIC
-# MAGIC df_bronze : DataFrame = spark.readStream\
-# MAGIC                              .format("delta")\
-# MAGIC                              .table("lending_club_stream_compact")
-# MAGIC   
-# MAGIC display(df_bronze)
+
+from pyspark.sql.functions import DataFrame
+
+"""
+Do some data deduplication on ingestion streams
+"""
+
+df_bronze : DataFrame = spark.readStream\
+                             .format("delta")\
+                             .table("lending_club_stream_compact")
+  
+display(df_bronze)
 
 # COMMAND ----------
 
@@ -331,15 +319,14 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Deduplicate Bronze level data
-# MAGIC """
-# MAGIC
-# MAGIC df_silver : DataFrame = df_bronze.distinct()
-# MAGIC   
-# MAGIC display(df_silver)
+
+"""
+Deduplicate Bronze level data
+"""
+
+df_silver : DataFrame = df_bronze.distinct()
+  
+display(df_silver)
 
 # COMMAND ----------
 
@@ -359,27 +346,25 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Specify a checkpoint directory for writing out a stream
-# MAGIC """
-# MAGIC
-# MAGIC checkpoint_dir_1 : str = f"/tmp/{db_name}/silver"
+
+"""
+Specify a checkpoint directory for writing out a stream
+"""
+
+checkpoint_dir_1 : str = f"/tmp/{db_name}/silver"
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Write deduplicated silver streams 
-# MAGIC """
-# MAGIC
-# MAGIC df_silver.writeStream\
-# MAGIC          .format("delta")\
-# MAGIC          .option("checkpointLocation", checkpoint_dir_1)\
-# MAGIC          .option("path", f"/tmp/{db_name}/lending_club_stream_silver")\
-# MAGIC          .table("lending_club_stream_silver")
+
+"""
+Write deduplicated silver streams 
+"""
+
+df_silver.writeStream\
+         .format("delta")\
+         .option("checkpointLocation", checkpoint_dir_1)\
+         .option("path", f"/tmp/{db_name}/lending_club_stream_silver")\
+         .table("lending_club_stream_silver")
 
 # COMMAND ----------
 
@@ -389,9 +374,8 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC display(dbutils.fs.ls("dbfs:/tmp/{db_name}/lending_club_stream_silver"))
+
+display(dbutils.fs.ls(f"dbfs:/tmp/{db_name}/lending_club_stream_silver"))
 
 # COMMAND ----------
 
@@ -411,27 +395,25 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Specify a checkpoint directory for writing out a stream
-# MAGIC """
-# MAGIC
-# MAGIC checkpoint_dir_2 : str = f"/tmp/{db_name}/silver_updates"
+
+"""
+Specify a checkpoint directory for writing out a stream
+"""
+
+checkpoint_dir_2 : str = f"/tmp/{db_name}/silver_updates"
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Write deduplicated silver streams 
-# MAGIC """
-# MAGIC
-# MAGIC df_silver.writeStream\
-# MAGIC          .format("delta")\
-# MAGIC          .option("checkpointLocation", checkpoint_dir_2)\
-# MAGIC          .option("path", f"/tmp/{db_name}/lending_club_stream_silver_updates")\
-# MAGIC          .table("lending_club_stream_silver_updates")
+
+"""
+Write deduplicated silver streams 
+"""
+
+df_silver.writeStream\
+         .format("delta")\
+         .option("checkpointLocation", checkpoint_dir_2)\
+         .option("path", f"/tmp/{db_name}/lending_club_stream_silver_updates")\
+         .table("lending_club_stream_silver_updates")
 
 # COMMAND ----------
 
@@ -441,9 +423,8 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC display(dbutils.fs.ls(f"dbfs:/tmp/{db_name}/lending_club_stream_silver_updates"))
+
+display(dbutils.fs.ls(f"dbfs:/tmp/{db_name}/lending_club_stream_silver_updates"))
 
 # COMMAND ----------
 
@@ -463,70 +444,67 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC display(df_silver.select("next_pymnt_d").na.drop().distinct())
+
+display(df_silver.select("next_pymnt_d").na.drop().distinct())
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC from pyspark.sql.functions import window
-# MAGIC
-# MAGIC """
-# MAGIC Do some real time aggregations with watermarking
-# MAGIC """
-# MAGIC
-# MAGIC df_gold : DataFrame = df_silver.withWatermark("next_pymnt_d", "1 month")\
-# MAGIC                                .groupBy(
-# MAGIC                                     window("next_pymnt_d", "10 minutes", "5 minutes"))\
-# MAGIC                                .sum()
-# MAGIC   
-# MAGIC display(df_gold)
+
+from pyspark.sql.functions import window
+
+"""
+Do some real time aggregations with watermarking
+"""
+
+df_gold : DataFrame = df_silver.withWatermark("next_pymnt_d", "1 month")\
+                               .groupBy(
+                                    window("next_pymnt_d", "10 minutes", "5 minutes"))\
+                               .sum()
+  
+display(df_gold)
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Specify a checkpoint directory for writing out a stream
-# MAGIC """
-# MAGIC
-# MAGIC checkpoint_dir_3 : str = f"/tmp/{db_name}/gold"
+
+"""
+Specify a checkpoint directory for writing out a stream
+"""
+
+checkpoint_dir_3 : str = f"/tmp/{db_name}/gold"
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Write aggregated gold stream.
-# MAGIC This should trigger an error due to invalid column names
-# MAGIC """
-# MAGIC
-# MAGIC df_gold.writeStream\
-# MAGIC        .format("delta")\
-# MAGIC        .option("checkpointLocation", checkpoint_dir_3)\
-# MAGIC        .option("path", f"/tmp/{db_name}/lending_club_stream_gold")\
-# MAGIC        .outputMode("complete")\
-# MAGIC        .table("lending_club_stream_gold")
+# DBTITLE 1,Gold - Error for invalid column names
+
+"""
+Write aggregated gold stream.
+This should trigger an error due to invalid column names
+"""
+
+df_gold.writeStream\
+       .format("delta")\
+       .option("checkpointLocation", checkpoint_dir_3)\
+       .option("path", f"/tmp/{db_name}/lending_club_stream_gold")\
+       .outputMode("complete")\
+       .table("lending_club_stream_gold")
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC """
-# MAGIC Fix column names for aggregation
-# MAGIC """
-# MAGIC
-# MAGIC new_columns = [column.replace("(","_").replace(")", "") for column in df_gold.columns]
-# MAGIC
-# MAGIC df_gold.toDF(*new_columns)\
-# MAGIC        .writeStream\
-# MAGIC        .format("delta")\
-# MAGIC        .option("checkpointLocation", checkpoint_dir_3)\
-# MAGIC        .option("path", f"/tmp/{db_name}/lending_club_stream_gold")\
-# MAGIC        .outputMode("complete")\
-# MAGIC        .table("lending_club_stream_gold")
+# DBTITLE 1,Gold
+
+"""
+Fix column names for aggregation
+"""
+
+new_columns = [column.replace("(","_").replace(")", "") for column in df_gold.columns]
+
+df_gold.toDF(*new_columns)\
+       .writeStream\
+       .format("delta")\
+       .option("checkpointLocation", checkpoint_dir_3)\
+       .option("path", f"/tmp/{db_name}/lending_club_stream_gold")\
+       .outputMode("complete")\
+       .table("lending_club_stream_gold")
 
 # COMMAND ----------
 
@@ -536,6 +514,5 @@
 
 # COMMAND ----------
 
-# MAGIC %python
-# MAGIC
-# MAGIC display(dbutils.fs.ls(f"dbfs:/tmp/{db_name}/lending_club_stream_gold"))
+
+display(dbutils.fs.ls(f"dbfs:/tmp/{db_name}/lending_club_stream_gold"))
