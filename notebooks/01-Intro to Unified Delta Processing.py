@@ -332,14 +332,15 @@
 
 # COMMAND ----------
 
-
-"""
-Deduplicate Bronze level data
-"""
-
-df_silver: DataFrame = df_bronze.distinct()
-
-display(df_silver)
+# MAGIC %python
+# MAGIC
+# MAGIC """
+# MAGIC Deduplicate Bronze level data
+# MAGIC """
+# MAGIC
+# MAGIC df_silver : DataFrame = df_bronze.distinct()
+# MAGIC
+# MAGIC display(df_silver)
 
 # COMMAND ----------
 
