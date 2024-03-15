@@ -44,6 +44,7 @@
 # MAGIC Create a database with random UUID
 # MAGIC """
 # MAGIC
+# MAGIC spark.sql(f"USE CATALOG hive_metastore")
 # MAGIC spark.sql(f"DROP DATABASE IF EXISTS {db_name} CASCADE")
 # MAGIC spark.sql(f"CREATE DATABASE IF NOT EXISTS {db_name}")
 # MAGIC spark.sql(f"USE DATABASE {db_name}")
@@ -62,7 +63,7 @@
 
 # MAGIC %md
 # MAGIC
-# MAGIC # Setup a delta stream   
+# MAGIC # Setup a delta stream
 
 # COMMAND ----------
 
@@ -103,9 +104,9 @@
 
 # MAGIC %md
 # MAGIC
-# MAGIC ## Spark Structured Streaming                                                   
+# MAGIC ## Spark Structured Streaming
 # MAGIC
-# MAGIC <img src="https://github.com/brickmeister/workshop_production_delta/blob/main/img/structuredStreaming.png?raw=true"> 
+# MAGIC <img src="https://github.com/brickmeister/workshop_production_delta/blob/main/img/structuredStreaming.png?raw=true">
 
 # COMMAND ----------
 
@@ -137,7 +138,7 @@
 # MAGIC
 # MAGIC
 # MAGIC
-# MAGIC <img src="https://github.com/brickmeister/workshop_production_delta/blob/main/img/checkpoint.png?raw=true"> 
+# MAGIC <img src="https://github.com/brickmeister/workshop_production_delta/blob/main/img/checkpoint.png?raw=true">
 
 # COMMAND ----------
 
@@ -249,7 +250,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md 
+# MAGIC %md
 # MAGIC
 # MAGIC ## Creating Bronze Tables
 
@@ -266,7 +267,7 @@
 # MAGIC df_bronze : DataFrame = spark.readStream\
 # MAGIC                              .format("delta")\
 # MAGIC                              .table("lending_club_stream_compact")
-# MAGIC   
+# MAGIC
 # MAGIC display(df_bronze)
 
 # COMMAND ----------
@@ -338,7 +339,7 @@
 # MAGIC """
 # MAGIC
 # MAGIC df_silver : DataFrame = df_bronze.distinct()
-# MAGIC   
+# MAGIC
 # MAGIC display(df_silver)
 
 # COMMAND ----------
@@ -372,7 +373,7 @@
 # MAGIC %python
 # MAGIC
 # MAGIC """
-# MAGIC Write deduplicated silver streams 
+# MAGIC Write deduplicated silver streams
 # MAGIC """
 # MAGIC
 # MAGIC df_silver.writeStream\
@@ -391,7 +392,7 @@
 
 # MAGIC %python
 # MAGIC
-# MAGIC display(dbutils.fs.ls("dbfs:/tmp/{db_name}/lending_club_stream_silver"))
+# MAGIC display(dbutils.fs.ls(f"dbfs:/tmp/{db_name}/lending_club_stream_silver"))
 
 # COMMAND ----------
 
@@ -424,7 +425,7 @@
 # MAGIC %python
 # MAGIC
 # MAGIC """
-# MAGIC Write deduplicated silver streams 
+# MAGIC Write deduplicated silver streams
 # MAGIC """
 # MAGIC
 # MAGIC df_silver.writeStream\
@@ -481,7 +482,7 @@
 # MAGIC                                .groupBy(
 # MAGIC                                     window("next_pymnt_d", "10 minutes", "5 minutes"))\
 # MAGIC                                .sum()
-# MAGIC   
+# MAGIC
 # MAGIC display(df_gold)
 
 # COMMAND ----------
