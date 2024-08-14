@@ -17,7 +17,7 @@
 
 # MAGIC %md
 # MAGIC
-# MAGIC # Setup some databases
+# MAGIC # Setup the database
 
 # COMMAND ----------
 
@@ -75,7 +75,6 @@
 # MAGIC
 # MAGIC ![Loan_Data](https://preview.ibb.co/d3tQ4R/Screen_Shot_2018_02_02_at_11_21_51_PM.png)
 # MAGIC
-# MAGIC https://www.kaggle.com/wendykan/lending-club-loan-data
 
 # COMMAND ----------
 
