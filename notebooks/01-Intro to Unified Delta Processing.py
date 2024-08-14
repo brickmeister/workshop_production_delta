@@ -8,9 +8,8 @@
 # MAGIC <img src="https://github.com/brickmeister/workshop_production_delta/blob/main/img/Multi-Hop%20Delta%20Lake.png?raw=true">
 # MAGIC
 # MAGIC See below links for more documentation:
-# MAGIC * [Beyond Lambda](https://databricks.com/discover/getting-started-with-delta-lake-tech-talks/beyond-lambda-introducing-delta-architecture)
 # MAGIC * [Delta Lake Docs](https://docs.databricks.com/delta/index.html)
-# MAGIC * [Medallion Architecture](https://databricks.com/solutions/data-pipelines)
+# MAGIC * [Medallion Architecture](https://www.databricks.com/glossary/medallion-architecture)
 # MAGIC * [Cost Savings with the Medallion Architecture](https://techcommunity.microsoft.com/t5/analytics-on-azure/how-to-reduce-infrastructure-costs-by-up-to-80-with-azure/ba-p/1820280)
 # MAGIC * [Change Data Capture Streams with the Medallion Architecture](https://databricks.com/blog/2021/06/09/how-to-simplify-cdc-with-delta-lakes-change-data-feed.html)
 
@@ -18,7 +17,7 @@
 
 # MAGIC %md
 # MAGIC
-# MAGIC # Setup some databases
+# MAGIC # Setup the database
 
 # COMMAND ----------
 
@@ -76,7 +75,6 @@
 # MAGIC
 # MAGIC ![Loan_Data](https://preview.ibb.co/d3tQ4R/Screen_Shot_2018_02_02_at_11_21_51_PM.png)
 # MAGIC
-# MAGIC https://www.kaggle.com/wendykan/lending-club-loan-data
 
 # COMMAND ----------
 
