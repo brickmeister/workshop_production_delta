@@ -34,7 +34,7 @@
 # MAGIC
 # MAGIC Setup alerts for delta job success and failure. Currently these jobs utilize an emailing alert that can be sent on job start, success, and failure.
 # MAGIC
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/alerts.png?raw=true'>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/JobNotifications.png?raw=true'>
 
 # COMMAND ----------
 
@@ -44,7 +44,7 @@
 # MAGIC
 # MAGIC Setup retries to restart delta jobs when they fail. This is used to ensure there is a degree of fault tolerance associated with mission critical pipelines.
 # MAGIC
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/retries.png?raw=true'>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/RetriesNew.png?raw=true'>
 
 # COMMAND ----------
 
@@ -73,7 +73,7 @@
 # MAGIC
 # MAGIC Schedule jobs to ensure they meet SLAs.
 # MAGIC
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/schedule.png?raw=true'>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/SchedulesAndTriggers.png?raw=true'>
 
 # COMMAND ----------
 
@@ -89,9 +89,9 @@
 # MAGIC
 # MAGIC ## Live Metrics
 # MAGIC
-# MAGIC Databricks cluster performance can be observed in the Ganglia UI which runs live on the cluster.
+# MAGIC Databricks cluster performance can be observed in the Metrics tab.
 # MAGIC
-# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/ganglia%20ui.png?raw=true'>
+# MAGIC <img src='https://github.com/brickmeister/workshop_production_delta/blob/main/img/Metrics.png?raw=true'>
 
 # COMMAND ----------
 
