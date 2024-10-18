@@ -37,6 +37,17 @@
 
 # COMMAND ----------
 
+dbutils.widgets.text("catalog", "hive_metastore")
+dbutils.widgets.text("database", "default")
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC USE CATALOG ${catalog}; 
+# MAGIC USE Database ${database};
+
+# COMMAND ----------
+
 # MAGIC %sql
 # MAGIC
 # MAGIC --

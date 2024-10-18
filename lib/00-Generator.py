@@ -1,20 +1,31 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC # Generator Script to Feed Bronze Tables with Data
 
 # COMMAND ----------
 
+dbutils.widgets.text("catalog", 'hive_metastore')
+dbutils.widgets.text("database", 'default')
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC USE CATALOG ${catalog}; 
+# MAGIC USE Database ${database};
+
+# COMMAND ----------
+
 # MAGIC %scala
-# MAGIC 
+# MAGIC
 # MAGIC /*
 # MAGIC   Setup a data set to create gzipped json files
 # MAGIC */
-# MAGIC 
+# MAGIC
 # MAGIC import org.apache.spark.sql.functions.rand;
 # MAGIC import org.apache.spark.sql.types.{StructType, StructField, StringType, IntegerType};
 # MAGIC import org.apache.spark.sql.DataFrame;
-# MAGIC 
+# MAGIC
 # MAGIC // get the schema from the parquet files
 # MAGIC val file_schema : StructType = spark.read
 # MAGIC                                 .format("parquet")
@@ -26,13 +37,13 @@
 # COMMAND ----------
 
 # MAGIC %scala
-# MAGIC 
+# MAGIC
 # MAGIC import org.apache.spark.sql.functions.{to_timestamp};
-# MAGIC 
+# MAGIC
 # MAGIC /*
 # MAGIC   Read lending club stream
 # MAGIC */
-# MAGIC 
+# MAGIC
 # MAGIC // get the schema from the parquet files
 # MAGIC val dfLendingClub : DataFrame = spark.read
 # MAGIC                                      .format("parquet")
@@ -42,20 +53,20 @@
 # MAGIC                                      .withColumn("last_pymnt_d", to_timestamp($"last_pymnt_d", "MMM-yyyy"))         // parse timestamp
 # MAGIC                                      .withColumn("next_pymnt_d", to_timestamp($"next_pymnt_d", "MMM-yyyy"))         // parse timestamp
 # MAGIC                                      .withColumn("issue_d", to_timestamp($"issue_d", "MMM-yyyy"));                  //parse timestamp
-# MAGIC 
-# MAGIC 
+# MAGIC
+# MAGIC
 # MAGIC // See the dataframe
 # MAGIC display(dfLendingClub)
 
 # COMMAND ----------
 
 # MAGIC %scala
-# MAGIC 
+# MAGIC
 # MAGIC /*
 # MAGIC   Write the lending club data into a bronze table using an infinite loop.
 # MAGIC   This is a generator
 # MAGIC */
-# MAGIC 
+# MAGIC
 # MAGIC while(true){
 # MAGIC   dfLendingClub.write
 # MAGIC                .format("delta")
